@@ -53,7 +53,7 @@ function pam_authenticate($pamh): int
 /etc/pam.d/ にある適切な設定ファイル (例: common-auth) に以下を追加して、pam-php モジュールを有効にします。
 
 ```
-auth required pam_php.so /path/to/your/script.php
+auth sufficient pam_php.so /path/to/your/script.php
 ```
 
 

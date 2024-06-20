@@ -47,6 +47,8 @@ function pam_authenticate($pamh): int
     }
 ?>
 
+```
+
 ### PAM 設定
 /etc/pam.d/ にある適切な設定ファイル (例: common-auth) に以下を追加して、pam-php モジュールを有効にします。
 

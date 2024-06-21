@@ -69,26 +69,6 @@ function pam_authenticate($pamh): int
             "answer" => "A"
         ],
         [
-            "question" => "PHPカンファレンス福岡2024の会場の一つはFusicホール、もう一つの会場は？",
-            "choices" => [
-                "A" => "ホライズンテクノロジーホール",
-                "B" => "福岡国際会議場",
-                "C" => "東京ドーム",
-                "D" => "ワールドビジネスサテライト"
-            ],
-            "answer" => "A"
-        ],
-        [
-            "question" => "プログラミング言語PHPの最初のバージョンであるPHP/FIの作者は？",
-            "choices" => [
-                "A" => "Rasmus Lerdorf",
-                "B" => "Linus Torvalds",
-                "C" => "Mark Zuckerberg",
-                "D" => "Larry Wall"
-            ],
-            "answer" => "A"
-        ],
-        [
             "question" => "次のPHPカンファレンスが開催されるのは？",
             "choices" => [
                 "A" => "沖縄",

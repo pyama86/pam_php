@@ -18,12 +18,6 @@ ZEND_ARG_INFO(0, pamh)
 ZEND_ARG_INFO(0, question)
 ZEND_END_ARG_INFO()
 
-PHP_MINIT_FUNCTION(php_pam_module)
-{
-  le_pam_handle = zend_register_list_destructors_ex(NULL, NULL, "PAM handle", module_number);
-  return SUCCESS;
-}
-
 PHP_FUNCTION(get_user)
 {
   zval *zpam_resource;

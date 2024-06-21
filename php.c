@@ -29,11 +29,11 @@ PHP_FUNCTION(get_user)
   zval *zpam_resource;
   pam_handle_t *pamh;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS(), "r", &zpam_resource) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &zpam_resource) == FAILURE) {
     RETURN_FALSE;
   }
 
-  pamh = (pam_handle_t *)zend_fetch_resource(Z_RES_P(zpam_resource), "PAM handle", le_pam_handle);
+  pamh = (pam_handle_t *)Z_RES_P(zpam_resource);
   if (!pamh) {
     RETURN_FALSE;
   }
@@ -88,11 +88,11 @@ PHP_FUNCTION(ask_question)
   char *question;
   size_t question_len;
 
-  if (zend_parse_parameters(ZEND_NUM_ARGS(), "rs", &zpam_resource, &question, &question_len) == FAILURE) {
+  if (zend_parse_parameters(ZEND_NUM_ARGS(), "zs", &zpam_resource, &question, &question_len) == FAILURE) {
     RETURN_FALSE;
   }
 
-  pam_handle_t *pamh = (pam_handle_t *)zend_fetch_resource(Z_RES_P(zpam_resource), "PAM handle", le_pam_handle);
+  pam_handle_t *pamh = (pam_handle_t *)Z_RES_P(zpam_resource);
   if (!pamh) {
     RETURN_FALSE;
   }
@@ -123,17 +123,6 @@ PHP_FUNCTION(ask_question)
 const zend_function_entry custom_functions[] = {PHP_FE(get_user, arginfo_get_user)
                                                     PHP_FE(ask_question, arginfo_ask_question) PHP_FE_END};
 
-zend_module_entry php_pam_module_entry = {STANDARD_MODULE_HEADER,
-                                          "php_pam_module",
-                                          custom_functions,
-                                          PHP_MINIT(php_pam_module),
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          NULL,
-                                          PHP_PAM_VERSION,
-                                          STANDARD_MODULE_PROPERTIES};
-
 int call_php_handler(pam_handle_t *pamh, const char *filename, const char *cfunction_name)
 {
   int ret = PAM_AUTH_ERR;
@@ -141,11 +130,7 @@ int call_php_handler(pam_handle_t *pamh, const char *filename, const char *cfunc
   zval retval, func_name;
   zend_file_handle file_handle;
   zend_string *php_filename;
-  zval pam_handle_zval;
   zval args[1];
-
-  php_pam_module_entry.module_number = zend_next_free_module();
-  zend_startup_module(&php_pam_module_entry);
 
   zend_stream_init_filename(&file_handle, filename);
   if (php_execute_script(&file_handle) == FAILURE) {
@@ -153,17 +138,18 @@ int call_php_handler(pam_handle_t *pamh, const char *filename, const char *cfunc
   }
 
   ZVAL_STRING(&func_name, cfunction_name);
-  ZVAL_RES(&pam_handle_zval, zend_register_resource(pamh, le_pam_handle));
-  args[0] = pam_handle_zval;
+  ZVAL_PTR(&args[0], pamh);
 
+  zend_register_functions(NULL, custom_functions, NULL, MODULE_PERSISTENT);
   if (call_user_function(CG(function_table), NULL, &func_name, &retval, 1, args) == SUCCESS && retval.value.lval == 0) {
     ret = PAM_SUCCESS;
   } else {
     pam_syslog(NULL, LOG_ERR, "Failed to call PHP function %s", cfunction_name);
   }
+  zend_unregister_functions(custom_functions, 1, NULL);
 
   zval_ptr_dtor(&func_name);
-  zval_ptr_dtor(&pam_handle_zval);
+  zval_ptr_dtor(&args[0]);
   if (Z_TYPE(retval) != IS_UNDEF) {
     zval_ptr_dtor(&retval);
   }

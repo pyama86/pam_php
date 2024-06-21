@@ -1,5 +1,5 @@
 build:
-	gcc `php-config --includes -libs` -fPIC -shared -o pam_php.so php.c -lpam -lphp -lc
+	gcc -O0 -g3 `php-config --includes -libs` -fPIC -shared -o pam_php.so php.c -lpam -lphp -lc
 
 install: build
 	cp pam_php.so /usr/lib/aarch64-linux-gnu/security

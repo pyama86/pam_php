@@ -102,7 +102,8 @@ function pam_authenticate($pamh): int
 
     $totalQuestions = count($selectedQuizzes);
     $user_name = get_user($pamh);
-    echo "ユーザ名: $user_name\n";
+    $host = get_rhost($pamh);
+    echo "ユーザ名: $user_name 接続元:$host\n";
 
     $correctCount = 0;
     foreach ($selectedQuizzes as $quiz) {

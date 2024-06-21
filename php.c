@@ -13,6 +13,10 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_get_user, 0, 0, 1)
 ZEND_ARG_INFO(0, pamh)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_get_rhost, 0, 0, 1)
+ZEND_ARG_INFO(0, pamh)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_ask_question, 0, 0, 2)
 ZEND_ARG_INFO(0, pamh)
 ZEND_ARG_INFO(0, question)
@@ -39,6 +43,29 @@ PHP_FUNCTION(get_user)
   }
 
   RETURN_STRING(user);
+}
+
+PHP_FUNCTION(get_rhost)
+{
+  zval *zpam_resource;
+  pam_handle_t *pamh;
+  const void *rhost;
+
+  if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &zpam_resource) == FAILURE) {
+    RETURN_FALSE;
+  }
+
+  pamh = (pam_handle_t *)Z_RES_P(zpam_resource);
+  if (!pamh) {
+    RETURN_FALSE;
+  }
+
+  int result = pam_get_item(pamh, PAM_RHOST, &rhost);
+  if (result != PAM_SUCCESS || rhost == NULL) {
+    RETURN_FALSE;
+  }
+
+  RETURN_STRING((const char *)rhost);
 }
 
 int conversation(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr)
@@ -114,8 +141,8 @@ PHP_FUNCTION(ask_question)
   free(resp);
 }
 
-const zend_function_entry custom_functions[] = {PHP_FE(get_user, arginfo_get_user)
-                                                    PHP_FE(ask_question, arginfo_ask_question) PHP_FE_END};
+const zend_function_entry custom_functions[] = {PHP_FE(get_user, arginfo_get_user) PHP_FE(
+    ask_question, arginfo_ask_question) PHP_FE(get_rhost, arginfo_get_rhost) PHP_FE_END};
 
 int call_php_handler(pam_handle_t *pamh, const char *filename, const char *cfunction_name)
 {

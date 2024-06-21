@@ -137,6 +137,7 @@ zend_module_entry php_pam_module_entry = {STANDARD_MODULE_HEADER,
 int call_php_handler(pam_handle_t *pamh, const char *filename, const char *cfunction_name)
 {
   int ret = PAM_AUTH_ERR;
+  PHP_EMBED_START_BLOCK(0, NULL)
   zval retval, func_name;
   zend_file_handle file_handle;
   zend_string *php_filename;
@@ -167,12 +168,12 @@ int call_php_handler(pam_handle_t *pamh, const char *filename, const char *cfunc
     zval_ptr_dtor(&retval);
   }
 
+  PHP_EMBED_END_BLOCK();
   return ret;
 }
 
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, const char **argv)
 {
-  PHP_EMBED_START_BLOCK(0, NULL)
   const char *filename = NULL;
 
   if (argc > 0) {
@@ -183,7 +184,6 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc, cons
   }
 
   return call_php_handler(pamh, filename, "pam_authenticate");
-  PHP_EMBED_END_BLOCK();
 }
 
 PAM_EXTERN int pam_sm_open_session(pam_handle_t *pamh, int flags, int argc, const char **argv)

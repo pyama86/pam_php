@@ -9,6 +9,8 @@
 - PHP スクリプトでの動的な認証ロジックの実装
 
 ## デモ
+![image](https://github.com/pyama86/pam_php/assets/8022082/b84ad42d-9fe9-4551-a915-3dfe6c8b8894)
+
 ```
 $ make docker
 $ su - gopher

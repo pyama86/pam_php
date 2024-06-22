@@ -9,7 +9,7 @@ RUN apt update -qqy && \
     php8.1-dev \
     vim \
     libphp8.1-embed
-RUN useradd -m -s /bin/bash seven && useradd -m -s /bin/bash eight
+RUN useradd -m -s /bin/bash gopher && useradd -m -s /bin/bash phper
 RUN sed -i '1s#^#auth sufficient pam_php.so /work/phpconfuk-2024.php\n#' /etc/pam.d/common-auth
 RUN rm -rf /etc/php/8.1/embed/conf.d/*
 WORKDIR /work

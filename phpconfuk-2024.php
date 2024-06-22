@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 function pam_authenticate($pamh): int
 {
     echo "PHPカンファレンス福岡2024へようこそ！\n";
-    $quizCount = 3;
+    $quizCount = 4;
     $phpQuizzes = [
         [
             "question" => "前回のPHPカンファレンスの開催地は？",
@@ -17,16 +17,6 @@ function pam_authenticate($pamh): int
                 "D" => "北海道"
             ],
             "answer" => "C"
-        ],
-        [
-            "question" => "P山さんが一番好きなPHPの関数名は？",
-            "choices" => [
-                "A" => "var_dump",
-                "B" => "print_r",
-                "C" => "array_merge",
-                "D" => "json_encode"
-            ],
-            "answer" => "A"
         ],
         [
             "question" => "清家さんといえば？",
